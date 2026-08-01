@@ -4,13 +4,13 @@
   "description": "Backend API for the Devnetic platform.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js"
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
   },
   "keywords": [],
   "author": "Muhammad Hamza Temuri",
   "license": "MIT",
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "express": "^5.2.1"
   }
