@@ -1,0 +1,17 @@
+{
+  "name": "devnetic-server",
+  "version": "1.0.0",
+  "description": "Backend API for the Devnetic platform.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [],
+  "author": "Muhammad Hamza Temuri",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
