@@ -1,13 +1,14 @@
 import express from "express";
-import developerRouter from "./routes/developer.routes.js";
+import taskRoutes from "./routes/task.routes.js";
+import { errorHandler } from "./middleware/errorHandler.js";
+import authRoutes from "./routes/auth.routes.js"
 
 const app = express();
 
-app.use("/developers", developerRouter);
-
-app.get("/", (req, res) => {
-    res.send("Welcome to Devnetic API");
-});
+app.use(express.json());
+app.use("/tasks", taskRoutes);
+app.use(errorHandler);
+app.use("/auth", authRoutes);
 
 
 export default app;
