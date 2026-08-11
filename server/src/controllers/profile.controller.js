@@ -33,7 +33,7 @@ export async function getProfileByUserId(req, res, next){
         next(error)
     }
 
-}
+};
 
 export async function updateProfile(req, res, next){
 
@@ -63,4 +63,35 @@ export async function updateProfile(req, res, next){
         next(error)
     }
 
+};
+
+
+export async function getAllProfiles(req, res, next){
+    try{
+        const filter = {};
+    
+        if(req.query.search){
+            filter.headline = { $regex: req.query.search, $options: "i" };
+        }
+
+        if(req.query.skills){
+            filter.skills = req.query.skills
+        }
+
+        if(req.query.availability){
+            filter.availability = req.query.availability;
+        }
+
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const skip = (page - 1) *limit;
+
+        const profiles = await Profile.find(filter).skip(skip).limit(limit);
+
+        res.json(profiles);
+
+    }
+    catch(error){
+        next(error);
+    }
 }
