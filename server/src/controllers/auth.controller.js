@@ -1,8 +1,6 @@
-import User from "../models/User.js";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { signupService } from "../services/signup.service.js";
+import { loginService } from "../services/login.service.js";
 import { AppError } from "../utils/AppError.js";
-
 
 ///////////////////////////////////////////////////
 
@@ -10,28 +8,15 @@ import { AppError } from "../utils/AppError.js";
 
 ///////////////////////////////////////////////////
 
-
 export async function login(req, res, next){
     try{
         const { email, password } = req.body;
 
         if(!email || !password){
-            return next(new AppError("Email and password are required"), 400)
+            return next(new AppError("Email and password are required", 400))
         }
 
-        const user = await User.findOne({ email });
-
-        if(!user){
-            return next(new AppError("Invalid email or password", 401));
-        }
-
-        const isMatch = await bcrypt.compare(password, user.password);
-
-        if(!isMatch){
-            return next(new AppError("Invalid email or password", 401));
-        }
-
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {expiresIn: "7d"});
+        const {token, user} = await loginService(email, password);
 
         res.json({
             token,user: {
@@ -45,8 +30,6 @@ export async function login(req, res, next){
         next(error);
     }
 }
-
-
 
 ///////////////////////////////////////////////////
 
@@ -62,7 +45,7 @@ export async function signup(req, res, next){
             return next(new AppError("Name, email, and password are required", 400));
         }
 
-        const newUser = await User.create({ name, email, password });
+        const newUser = await signupService(name, email, password);
 
         res.status(201).json({
             id: newUser._id,

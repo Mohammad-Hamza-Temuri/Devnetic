@@ -1,97 +1,104 @@
-import Profile from "../models/DeveloperProfile.js";
+import { createProfileService, getProfileByUserIdService, updateProfileService, getAllProfilesService } from "../services/profile.service.js";
 import { AppError } from "../utils/AppError.js";
 
+export async function createProfile(req, res, next) {
 
-export async function createProfile(req, res, next){
-
-    try{
+    try {
         const user = req.userId;
-        const { headline, bio, location, yearsOfExperience, skills, githubUrl, portfolioUrl, linkedinUrl, availability } = req.body;
 
-        const devProfile = await Profile.create({ user,headline, bio, location, yearsOfExperience, skills, githubUrl, portfolioUrl, linkedinUrl, availability });
+        const { headline,
+            bio,
+            location,
+            yearsOfExperience,
+            skills,
+            githubUrl,
+            portfolioUrl,
+            linkedinUrl,
+            availability } = req.body;
+
+        const profileData = {
+            user,
+            headline,
+            bio,
+            location,
+            yearsOfExperience,
+            skills,
+            githubUrl,
+            portfolioUrl,
+            linkedinUrl,
+            availability
+        };
+
+        const devProfile = await createProfileService(profileData);
         res.status(201).json(devProfile);
     }
-    catch(error){
+    catch (error) {
         next(error)
     }
 };
 
-export async function getProfileByUserId(req, res, next){
-
-    try{
-
+export async function getProfileByUserId(req, res, next) {
+    try {
         const userId = req.params.id;
-        const user = await Profile.findOne({ user: userId });
 
-        if(!user){
-            return next(new AppError("User not found", 404));
-        }
+        const profile = await getProfileByUserIdService(userId);
 
-        res.json(user);
+        res.json(profile);
     }
-    catch(error){
-        next(error)
+    catch (error) {
+        next(error);
     }
+}
 
-};
+export async function updateProfile(req, res, next) {
 
-export async function updateProfile(req, res, next){
-
-    try{
+    try {
         const userId = req.userId;
-        const user = await Profile.findOne({user: userId});
-
-        if(!user){
-            return next(new AppError("User not found", 404));
-        }
-
         const { headline, bio, location, yearsOfExperience, skills, githubUrl, portfolioUrl, linkedinUrl, availability } = req.body;
+        const profileData = {
+            headline,
+            bio,
+            location,
+            yearsOfExperience,
+            skills,
+            githubUrl,
+            portfolioUrl,
+            linkedinUrl,
+            availability
+        };
+        const user = await updateProfileService(userId, profileData);
 
-        user.headline = headline;
-        user.bio = bio;
-        user.location = location;
-        user.yearsOfExperience = yearsOfExperience;
-        user.skills = skills;
-        user.githubUrl = githubUrl;
-        user.linkedinUrl = linkedinUrl;
-        user.availability = availability;
-
-        await user.save();
         res.json(user);
     }
-    catch(error){
+    catch (error) {
         next(error)
     }
 
 };
 
 
-export async function getAllProfiles(req, res, next){
-    try{
-        const filter = {};
-    
-        if(req.query.search){
-            filter.headline = { $regex: req.query.search, $options: "i" };
-        }
+export async function getAllProfiles(req, res, next) {
+    try {
 
-        if(req.query.skills){
-            filter.skills = req.query.skills
-        }
-
-        if(req.query.availability){
-            filter.availability = req.query.availability;
-        }
+        const { search, skills, availability } = req.query;
 
         const page = Number(req.query.page) || 1;
         const limit = Number(req.query.limit) || 10;
-        const skip = (page - 1) *limit;
 
-        const profiles = await Profile.find(filter).skip(skip).limit(limit);
+        const queryData = {
+            search,
+            skills,
+            availability,
+            page,
+            limit
+        };
+
+        const profiles = await getAllProfilesService(queryData);
 
         res.json(profiles);
 
     }
-    catch(error){
+    catch (error) {
         next(error);
     }
 }
