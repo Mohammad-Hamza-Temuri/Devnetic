@@ -8,7 +8,7 @@ export const loginService = async(email, password) => {
     const user = await User.findOne({ email });
 
     if(!user){
-        throw new AppError("Email and password are required", 400);
+        throw new AppError("Invalid email or password", 401);
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
