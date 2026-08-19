@@ -1,7 +1,11 @@
-import Project from "../models/Project.js";
-import ProjectMember from "../models/ProjectMember.js";
-import { createProjectService, getAllProjectsService, getProjectByIdService, updateProjectService, deleteProjectService, getProjectMembersService } from "../services/project.service.js";
-import { AppError } from "../utils/AppError.js";
+import {
+  createProjectService,
+  getAllProjectsService,
+  getProjectByIdService,
+  updateProjectService,
+  deleteProjectService,
+  getProjectMembersService,
+} from "../services/project.service.js";
 
 export async function createProject(req, res, next) {
   try {
@@ -92,17 +96,16 @@ export async function updateProject(req, res, next) {
 }
 
 export async function deleteProject(req, res, next) {
-    try {
-        const userId = req.userId;
-        const projectId = req.params.id;
+  try {
+    const userId = req.userId;
+    const projectId = req.params.id;
 
-        await deleteProjectService(projectId, userId);
+    await deleteProjectService(projectId, userId);
 
-        res.status(204).send();
-
-    } catch (error) {
-        next(error);
-    }
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
 }
 
 export async function getProjectMembers(req, res, next) {
