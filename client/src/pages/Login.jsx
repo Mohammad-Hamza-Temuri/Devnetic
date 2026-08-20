@@ -2,15 +2,22 @@ import { useState } from "react";
 import LoginImage from "../assets/Devnetic-login-signup-page.webp";
 // import SiteLogo from "../assets/Devnetic Logo.png"
 import SiteLogoTransparent from "../assets/Devnetic-Logo-Transparent.png"
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     async function handleSubmit(e) {
         e.preventDefault();
         setError("");
+        setLoading(true);
 
         const res = await fetch("http://localhost:3000/auth/login", {
             method: "POST",
@@ -22,10 +29,11 @@ const Login = () => {
 
         if (!res.ok) {
             setError(data.message);
+            setLoading(false);
             return;
         }
         localStorage.setItem("token", data.token);
-        console.log("logged in!", data);
+        navigate("/dashboard");
     }
 
     return (
@@ -36,14 +44,14 @@ const Login = () => {
                 style={{ backgroundImage: `url(${LoginImage})` }}
             >
                 <img src={SiteLogoTransparent} alt="Devnetic logo" className="w-80" />
-                <h1 className="text-white text-5xl font-bold drop-shadow-lg">Devnetic</h1>
-                <p className="text-white text-lg mt-2 drop-shadow-md">Connect. Build. Collaborate.</p>
+                {/* <h1 className="text-white text-5xl font-bold drop-shadow-lg">Devnetic</h1> */}
+                {/* <p className="text-white text-lg mt-2 drop-shadow-md">Connect. Build. Collaborate.</p> */}
             </div>
 
             {/* Right column - form */}
             <div className="w-1/2 flex flex-col items-center justify-center bg-gray-50">
                 <div className="w-full max-w-sm">
-                    
+
                     <h2 className="text-4xl font-bold mb-1">Sign In</h2>
                     <p className="text-gray-500 mb-6">Login to your Devnetic account</p>
 
@@ -55,24 +63,40 @@ const Login = () => {
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="Enter your email"
                         />
-
-                        <input
-                            type="password"
-                            className="w-full bg-white rounded-xl border border-gray-300 py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Enter your password"
-                        />
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                className="w-full bg-white rounded-xl border border-gray-300 py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Enter your password"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-primary transition-colors cursor-pointer"
+                            >
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                            </button>
+                            
+                        </div>
 
                         <button
+                            disabled={loading}
                             className="w-full rounded-xl py-3 text-white bg-primary hover:bg-primary-dark transition-colors cursor-pointer font-medium"
                             type="submit"
                         >
-                            Login
+                            {loading ? "Logging in..." : "Login"}
                         </button>
 
                         {error && <p className="text-red-500 text-sm">{error}</p>}
                     </form>
+                    <p className="text-gray-500 text-sm mt-4">
+                        Don't have an account?{" "}
+                        <Link to="/signup" className="text-primary font-medium hover:underline">
+                            Sign up
+                        </Link>
+                    </p>
                 </div>
             </div>
         </div>
