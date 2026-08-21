@@ -1,6 +1,6 @@
 import { useState } from "react";
 import LoginImage from "../assets/Devnetic-login-signup-page.webp";
-// import SiteLogo from "../assets/Devnetic Logo.png"
+import SiteLogo from "../assets/Devnetic Logo.png"
 import SiteLogoTransparent from "../assets/Devnetic-Logo-Transparent.png"
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -46,7 +46,7 @@ const Signup = () => {
         <div className="flex h-screen">
             {/* Left column - image/branding */}
             <div
-                className="w-1/2 bg-cover bg-center flex flex-col items-center justify-center"
+                className="hidden lg:flex lg:w-1/2 bg-cover bg-center flex-col items-center justify-center"
                 style={{ backgroundImage: `url(${LoginImage})` }}
             >
                 <img src={SiteLogoTransparent} alt="Devnetic logo" className="w-80" />
@@ -55,9 +55,9 @@ const Signup = () => {
             </div>
 
             {/* Right column - form */}
-            <div className="w-1/2 flex flex-col items-center justify-center bg-gray-50">
-                <div className="w-full max-w-sm">
-
+            <div className="w-full lg:w-1/2 flex flex-col items-center justify-center bg-gray-50">
+                <div className="w-full max-w-sm px-4">
+                    <img src={SiteLogo} alt="Devnetic logo" className="w-42 mb-6 lg:hidden" />
                     <h2 className="text-4xl font-bold mb-1">Sign Up</h2>
                     <p className="text-gray-500 mb-6">Signup to create your Devnetic account</p>
 

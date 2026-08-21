@@ -1,6 +1,6 @@
 import { useState } from "react";
 import LoginImage from "../assets/Devnetic-login-signup-page.webp";
-// import SiteLogo from "../assets/Devnetic Logo.png"
+import SiteLogo from "../assets/Devnetic Logo.png"
 import SiteLogoTransparent from "../assets/Devnetic-Logo-Transparent.png"
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -19,28 +19,35 @@ const Login = () => {
         setError("");
         setLoading(true);
 
-        const res = await fetch("http://localhost:3000/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-        });
+        try {
+            const res = await fetch("http://localhost:3000/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+            });
 
-        const data = await res.json();
+            const data = await res.json();
 
-        if (!res.ok) {
-            setError(data.message);
+            if (!res.ok) {
+                setError(data.message);
+                setLoading(false);
+                return;
+            }
+            localStorage.setItem("token", data.token);
+            navigate("/dashboard");
+
+        } catch (err) {
+            console.error("Login request failed:", err);
+            setError("Could not connect to the server. Please try again.");
             setLoading(false);
-            return;
         }
-        localStorage.setItem("token", data.token);
-        navigate("/dashboard");
     }
 
     return (
         <div className="flex h-screen">
             {/* Left column - image/branding */}
             <div
-                className="w-1/2 bg-cover bg-center flex flex-col items-center justify-center"
+                className="hidden lg:flex lg:w-1/2 bg-cover bg-center flex-col items-center justify-center"
                 style={{ backgroundImage: `url(${LoginImage})` }}
             >
                 <img src={SiteLogoTransparent} alt="Devnetic logo" className="w-80" />
@@ -49,9 +56,9 @@ const Login = () => {
             </div>
 
             {/* Right column - form */}
-            <div className="w-1/2 flex flex-col items-center justify-center bg-gray-50">
-                <div className="w-full max-w-sm">
-
+            <div className="w-full lg:w-1/2 flex flex-col items-center justify-center bg-gray-50">
+                <div className="w-full max-w-sm px-4">
+                    <img src={SiteLogo} alt="Devnetic logo" className="w-42 mb-6 lg:hidden" />
                     <h2 className="text-4xl font-bold mb-1">Sign In</h2>
                     <p className="text-gray-500 mb-6">Login to your Devnetic account</p>
 
@@ -78,7 +85,7 @@ const Login = () => {
                             >
                                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
-                            
+
                         </div>
 
                         <button
