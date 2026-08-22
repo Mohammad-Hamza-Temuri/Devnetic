@@ -1,23 +1,51 @@
+import { useEffect, useState } from "react";
 
 // Placeholder data - this will be replaced with real backend data
 const placeholderUser = { name: "Hamza" };
 
-const placeholderProfile = {
-  headline: "Backend Developer",
-  skills: ["Node.js", "Express", "MongoDB"],
-  availability: "available",
-};
-
-const placeholderProjects = [
-  { _id: "1", title: "Devnetic Backend", category: "Web Development", techStack: ["Node.js", "Express", "MongoDB"] },
-  { _id: "2", title: "Portfolio Website", category: "Frontend", techStack: ["React", "Tailwind"] },
-];
-
-const placeholderInvitations = [
-  { _id: "1", projectTitle: "Court Konnect" },
-];
-
 const Dashboard = () => {
+
+  const [profile, setProfile] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const [invitations, setInvitations] = useState([]);
+
+  useEffect(() => {
+
+    async function fetchProfile() {
+      const userId = localStorage.getItem("userId");
+
+      const res = await fetch(`http://localhost:3000/profile/${userId}`);
+      const data = await res.json();
+
+      setProfile(data);
+    }
+
+    async function fetchProjects() {
+      const res = await fetch("http://localhost:3000/projects");
+      const data = await res.json();
+
+      setProjects(data)
+    }
+
+    async function fetchInvitaions() {
+      const token = localStorage.getItem("token");
+      const res = await fetch("http://localhost:3000/invitations/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+
+      setInvitations(data);
+    }
+
+    fetchInvitaions();
+    fetchProfile();
+    fetchProjects();
+  }, [])
+
+
+
   return (
     <div className="px-6 lg:px-10 py-10">
       {/* Header */}
@@ -32,33 +60,35 @@ const Dashboard = () => {
         {/* Left column - profile + invitations */}
         <div className="lg:col-span-1 space-y-6">
           {/* Profile summary card */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-            <h2 className="font-semibold text-gray-900 mb-3">Your Profile</h2>
-            <p className="text-lg font-medium text-gray-900">{placeholderProfile.headline}</p>
-            <div className="flex flex-wrap gap-2 mt-3">
-              {placeholderProfile.skills.map((skill) => (
-                <span
-                  key={skill}
-                  className="text-xs bg-primary/10 text-primary rounded-full px-3 py-1 font-medium"
-                >
-                  {skill}
-                </span>
-              ))}
+          {profile && (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+              <h2 className="font-semibold text-gray-900 mb-3">Your Profile</h2>
+              <p className="text-lg font-medium text-gray-900">{profile.headline}</p>
+              <div className="flex flex-wrap gap-2 mt-3">
+                {profile.skills.map((skill) => (
+                  <span
+                    key={skill}
+                    className="text-xs bg-primary/10 text-primary rounded-full px-3 py-1 font-medium"
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+              <p className="text-sm text-gray-500 mt-3 capitalize">{profile.availability}</p>
+              <button className="mt-4 w-full rounded-xl py-2 border border-gray-300 text-gray-700 hover:border-primary hover:text-primary transition-colors text-sm font-medium">
+                Edit Profile
+              </button>
             </div>
-            <p className="text-sm text-gray-500 mt-3 capitalize">{placeholderProfile.availability}</p>
-            <button className="mt-4 w-full rounded-xl py-2 border border-gray-300 text-gray-700 hover:border-primary hover:text-primary transition-colors text-sm font-medium">
-              Edit Profile
-            </button>
-          </div>
+          )}
 
           {/* Invitations preview */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
             <h2 className="font-semibold text-gray-900 mb-3">Invitations</h2>
-            {placeholderInvitations.length === 0 ? (
+            {invitations.length === 0 ? (
               <p className="text-sm text-gray-500">No pending invitations.</p>
             ) : (
               <p className="text-sm text-gray-600">
-                You have {placeholderInvitations.length} pending invitation(s).
+                You have {invitations.length} pending invitation(s).
               </p>
             )}
             <button className="mt-4 w-full rounded-xl py-2 border border-gray-300 text-gray-700 hover:border-primary hover:text-primary transition-colors text-sm font-medium">
@@ -77,7 +107,7 @@ const Dashboard = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {placeholderProjects.map((project) => (
+            {projects.filter((project) => project.title).map((project) => (
               <div
                 key={project._id}
                 className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 hover:shadow-md transition-shadow"

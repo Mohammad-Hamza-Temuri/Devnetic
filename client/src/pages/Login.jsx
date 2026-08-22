@@ -34,6 +34,7 @@ const Login = () => {
                 return;
             }
             localStorage.setItem("token", data.token);
+            localStorage.setItem("userId", data.user.id);
             navigate("/dashboard");
 
         } catch (err) {

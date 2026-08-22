@@ -1,28 +1,37 @@
 import mongoose from "mongoose";
 
 const projectSchema = new mongoose.Schema({
-    
-    owner:{
+
+    owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
     },
 
-        title: String,
-        description: String,
-        category: String,
-        requiredSkills: [String],
-        techStack: [String],
-        startDate: Date,
-        endDate: Date,
-        repositoryUrl: String,
+    title: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    category: {
+        type: String,
+        required: true
+    },
+    requiredSkills: [String],
+    techStack: [String],
+    startDate: Date,
+    endDate: Date,
+    repositoryUrl: String,
 
     status: {
         type: String,
         enum: ["active", "completed", "archived"],
         default: "active"
     },
-    
+
     visibility: {
         type: String,
         enum: ["public", "private"],
