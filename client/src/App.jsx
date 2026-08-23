@@ -8,6 +8,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import DashboardLayout from './components/DashboardLayout'
 import Profile from './pages/Profile';
 import { Toaster } from "react-hot-toast";
+import Projects from './pages/Projects'
 
 
 
@@ -23,6 +24,7 @@ function App() {
         <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/projects" element={<Projects />} />
         </Route>
       </Routes>
     </BrowserRouter>

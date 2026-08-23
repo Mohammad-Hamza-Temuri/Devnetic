@@ -19,11 +19,11 @@ const Sidebar = () => {
   }
 
   return (
-    <aside className="w-64 h-screen bg-white border-r border-gray-100 flex flex-col justify-between fixed left-0 top-0">
+    <aside className="w-64 h-screen bg-[#00000B] border-r border-gray-100 flex flex-col justify-between fixed left-0 top-0">
       <div>
         {/* Logo */}
         <Link to="/dashboard" className="flex items-center gap-2 px-6 py-6">
-          <img src={SiteLogo} alt="Devnetic logo" className="w-42" />
+          <img src={SiteLogo} alt="Devnetic logo" className="w-52" />
         </Link>
 
         {/* Nav links */}
@@ -38,8 +38,8 @@ const Sidebar = () => {
                 to={item.path}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                   isActive
-                    ? "bg-primary/10 text-primary"
-                    : "text-gray-600 hover:bg-primary/10"
+                    ? "bg-white text-primary"
+                    : "text-white hover:bg-white hover:text-primary"
                 }`}
               >
                 <Icon size={18} />
@@ -54,7 +54,7 @@ const Sidebar = () => {
       <div className="px-4 pb-6">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium bg-red-500/10 text-red-500  hover:bg-white transition-colors cursor-pointer"
         >
           <LogOut size={18} />
           Logout
