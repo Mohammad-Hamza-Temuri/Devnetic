@@ -107,7 +107,7 @@ const Dashboard = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {projects.filter((project) => project.title).map((project) => (
+            {projects.slice(0, 4).filter((project) => project.title).map((project) => (
               <Link key={project._id} to={`/projects/${project._id}`}>
                 <div
                   key={project._id}

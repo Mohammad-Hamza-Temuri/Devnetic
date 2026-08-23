@@ -18,7 +18,7 @@ export const createProjectService = async (owner, projectData) => {
 };
 
 export const getAllProjectsService = async () => {
-    const projects = await Project.find();
+    const projects = await Project.find().sort({ createdAt: -1 });
     return projects;
 };
 

@@ -37,8 +37,7 @@ const projectSchema = new mongoose.Schema({
         enum: ["public", "private"],
         default: "public"
     },
-
-});
+},{ timestamps: true });
 
 const Project = mongoose.model("Project", projectSchema);
 
