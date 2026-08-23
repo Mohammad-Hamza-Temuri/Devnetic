@@ -6,6 +6,8 @@ import Dashboard from './pages/Dashboard';
 import Landing from './pages/Landing';
 import ProtectedRoute from './components/ProtectedRoute';
 import DashboardLayout from './components/DashboardLayout'
+import Profile from './pages/Profile';
+import { Toaster } from "react-hot-toast";
 
 
 
@@ -13,12 +15,14 @@ function App() {
 
   return (
     <BrowserRouter>
+    <Toaster position="top-right" />
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>
     </BrowserRouter>
