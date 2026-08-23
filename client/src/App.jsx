@@ -9,7 +9,7 @@ import DashboardLayout from './components/DashboardLayout'
 import Profile from './pages/Profile';
 import { Toaster } from "react-hot-toast";
 import Projects from './pages/Projects'
-
+import SingleProject from './pages/SingleProject';
 
 
 function App() {
@@ -25,6 +25,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/projects/:id" element={<SingleProject />} />
         </Route>
       </Routes>
     </BrowserRouter>

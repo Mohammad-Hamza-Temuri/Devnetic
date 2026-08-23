@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
+import { Link } from 'react-router-dom';
 
 const Projects = () => {
 
@@ -24,6 +25,7 @@ const Projects = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 {projects.filter((project) => project.title).map((project) => (
+                <Link key={project._id} to={`/projects/${project._id}`}>
                     <div
                         key={project._id}
                         className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 hover:shadow-md transition-shadow"
@@ -41,6 +43,7 @@ const Projects = () => {
                             ))}
                         </div>
                     </div>
+                    </Link>
                 ))}
             </div>
 
