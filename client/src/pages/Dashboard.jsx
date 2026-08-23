@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import { Link } from 'react-router-dom';
 // Placeholder data - this will be replaced with real backend data
 const placeholderUser = { name: "Hamza" };
 
@@ -75,9 +75,9 @@ const Dashboard = () => {
                 ))}
               </div>
               <p className="text-sm text-gray-500 mt-3 capitalize">{profile.availability}</p>
-              <button className="mt-4 w-full rounded-xl py-2 border border-gray-300 text-gray-700 hover:border-primary hover:text-primary transition-colors text-sm font-medium">
+              <Link to="/profile" className="mt-4 w-full block text-center rounded-xl py-2 border border-gray-300 text-gray-700 hover:border-primary hover:text-primary transition-colors text-sm font-medium">
                 Edit Profile
-              </button>
+              </Link>
             </div>
           )}
 
