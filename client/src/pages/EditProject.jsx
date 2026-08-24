@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
-const CreateProject = () => {
+const EditProject = () => {
+
+    const { id } = useParams();
     const navigate = useNavigate();
+    
     const [loading, setLoading] = useState(false);
     const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
+    const [description, setDescription,] = useState("");
     const [category, setCategory] = useState("");
     const [requiredSkills, setRequiredSkills] = useState("");
     const [techStack, setTechStack] = useState("");
@@ -15,7 +19,7 @@ const CreateProject = () => {
     const [repositoryUrl, setRepositoryUrl] = useState("");
 
     async function handleSubmit(e) {
-        e.preventDefault();
+        e.preventDefault()
         setLoading(true);
 
         const requiredSkillsArray = requiredSkills
@@ -29,41 +33,54 @@ const CreateProject = () => {
             .filter(Boolean);
 
         const token = localStorage.getItem("token");
-
-        const res = await fetch("http://localhost:3000/projects", {
-            method: "POST",
-            headers: {
+        const res = await fetch(`http://localhost:3000/projects/${id}`,{
+            method:"PUT",
+            headers:{
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-                title,
-                description,
-                category,
+                title, 
+                description, 
+                category, 
                 requiredSkills: requiredSkillsArray,
                 techStack: techStackArray,
-                startDate,
-                endDate,
-                repositoryUrl,
+                startDate, 
+                endDate, 
+                repositoryUrl
             }),
         });
-
         const data = await res.json();
-        setLoading(false);
 
         if (!res.ok) {
-            toast.error(data.message || "Failed to create project");
+            toast.error(data.message || "Failed to update project");
+            setLoading(false);
             return;
         }
-
-        toast.success("Project created successfully!");
-        navigate(`/projects/${data._id}`);
+        toast.success("Project updated successfully!");
+        navigate(`/projects/${id}`);
     }
 
+    useEffect(() => {
+    async function fetchProject() {
+        const res = await fetch(`http://localhost:3000/projects/${id}`);
+        const data = await res.json();
 
-    return (
-        <div className="px-6 lg:px-10 py-10 max-w-2xl">
-            <h1 className="text-2xl font-bold text-gray-900 mb-6">Create Project</h1>
+        setTitle(data.title);
+        setDescription(data.description);
+        setCategory(data.category);
+        setRequiredSkills(data.requiredSkills.join(", "));
+        setTechStack(data.techStack.join(", "));
+        setStartDate(data.startDate);
+        setEndDate(data.endDate);
+        setRepositoryUrl(data.repositoryUrl);
+    }
+    fetchProject();
+}, [id]);
+
+  return (
+     <div className="px-6 lg:px-10 py-10 max-w-2xl">
+            <h1 className="text-2xl font-bold text-gray-900 mb-6">Edit Project</h1>
 
             <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
                 <label className="block text-[16px] font-bold text-gray-700 mb-1">Title</label>
@@ -145,11 +162,11 @@ const CreateProject = () => {
                     type="submit"
                     className="rounded-xl py-3 text-white bg-primary hover:bg-primary-dark transition-colors font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {loading ? "Creating..." : "Create"}
+                    {loading ? "Updating..." : "Update"}
                 </button>
             </form>
         </div>
-    );
-};
+  )
+}
 
-export default CreateProject;
+export default EditProject

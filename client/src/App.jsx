@@ -11,6 +11,7 @@ import { Toaster } from "react-hot-toast";
 import Projects from './pages/Projects'
 import SingleProject from './pages/SingleProject';
 import CreateProject from './pages/CreateProject';
+import EditProject from './pages/EditProject';
 
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:id" element={<SingleProject />} />
           <Route path="/projects/new" element={<CreateProject />} />
+          <Route path="/projects/:id/edit" element={<EditProject />} />
         </Route>
       </Routes>
     </BrowserRouter>
