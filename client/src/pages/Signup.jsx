@@ -49,7 +49,9 @@ const Signup = () => {
                 className="hidden lg:flex lg:w-1/2 bg-cover bg-center flex-col items-center justify-center"
                 style={{ backgroundImage: `url(${LoginImage})` }}
             >
-                <img src={SiteLogoTransparent} alt="Devnetic logo" className="w-80" />
+                <div className="backdrop-blur-md bg-black/40 border border-white/10 p-6 rounded-2xl shadow-2xl inline-block">
+                    <img src={SiteLogoTransparent} alt="Devnetic logo" className="w-80" />
+                </div>
                 {/* <h1 className="text-white text-5xl font-bold drop-shadow-lg">Devnetic</h1> */}
                 {/* <p className="text-white text-lg mt-2 drop-shadow-md">Connect. Build. Collaborate.</p> */}
             </div>
