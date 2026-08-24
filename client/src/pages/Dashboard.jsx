@@ -101,9 +101,10 @@ const Dashboard = () => {
         <div className="lg:col-span-2">
           <div className="flex justify-between items-center mb-4">
             <h2 className="font-semibold text-gray-900">Recent Projects</h2>
-            <button className="rounded-xl py-2 px-5 bg-primary text-white hover:bg-primary-dark transition-colors text-sm font-medium">
+            <Link to={"/projects/new"}
+              className="rounded-xl py-2 px-5 bg-primary text-white hover:bg-primary-dark transition-colors text-sm font-medium">
               + Create Project
-            </button>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
