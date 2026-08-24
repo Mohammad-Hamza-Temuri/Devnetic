@@ -12,7 +12,7 @@ const Hero = () => {
 
       {/* Content sits above the overlay */}
       <div className="relative z-10">
-        <h1 className="text-4xl lg:text-6xl font-bold text-white max-w-3xl leading-tight">
+        <h1 className="text-4xl lg:text-6xl font-bold text-white max-w-3xl leading-tight capitalize">
           Build something meaningful with{" "}
           <span className="bg-linear-to-r from-primary to-blue-400 bg-clip-text text-transparent">
             the right developers.
