@@ -7,7 +7,7 @@ const EditProject = () => {
 
     const { id } = useParams();
     const navigate = useNavigate();
-    
+
     const [loading, setLoading] = useState(false);
     const [title, setTitle] = useState("");
     const [description, setDescription,] = useState("");
@@ -33,20 +33,20 @@ const EditProject = () => {
             .filter(Boolean);
 
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://localhost:3000/projects/${id}`,{
-            method:"PUT",
-            headers:{
+        const res = await fetch(`http://localhost:3000/projects/${id}`, {
+            method: "PUT",
+            headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-                title, 
-                description, 
-                category, 
+                title,
+                description,
+                category,
                 requiredSkills: requiredSkillsArray,
                 techStack: techStackArray,
-                startDate, 
-                endDate, 
+                startDate,
+                endDate,
                 repositoryUrl
             }),
         });
@@ -62,24 +62,24 @@ const EditProject = () => {
     }
 
     useEffect(() => {
-    async function fetchProject() {
-        const res = await fetch(`http://localhost:3000/projects/${id}`);
-        const data = await res.json();
+        async function fetchProject() {
+            const res = await fetch(`http://localhost:3000/projects/${id}`);
+            const data = await res.json();
 
-        setTitle(data.title);
-        setDescription(data.description);
-        setCategory(data.category);
-        setRequiredSkills(data.requiredSkills.join(", "));
-        setTechStack(data.techStack.join(", "));
-        setStartDate(data.startDate);
-        setEndDate(data.endDate);
-        setRepositoryUrl(data.repositoryUrl);
-    }
-    fetchProject();
-}, [id]);
+            setTitle(data.title);
+            setDescription(data.description);
+            setCategory(data.category);
+            setRequiredSkills(data.requiredSkills.join(", "));
+            setTechStack(data.techStack.join(", "));
+            setStartDate(data.startDate ? data.startDate.slice(0, 10) : "");
+            setEndDate(data.endDate ? data.endDate.slice(0, 10) : "");
+            setRepositoryUrl(data.repositoryUrl);
+        }
+        fetchProject();
+    }, [id]);
 
-  return (
-     <div className="px-6 lg:px-10 py-10 max-w-2xl">
+    return (
+        <div className="px-6 lg:px-10 py-10 max-w-2xl">
             <h1 className="text-2xl font-bold text-gray-900 mb-6">Edit Project</h1>
 
             <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
@@ -166,7 +166,7 @@ const EditProject = () => {
                 </button>
             </form>
         </div>
-  )
+    )
 }
 
 export default EditProject
