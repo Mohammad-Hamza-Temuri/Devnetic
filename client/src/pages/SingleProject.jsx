@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { Pencil, Trash2 } from "lucide-react";
+import InviteModal from "../components/InviteModal";
+import { Pencil, Trash2, Plus } from "lucide-react";
 
 const statusStyles = {
   active: "bg-green-100 text-green-700",
@@ -13,6 +14,7 @@ const SingleProject = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [project, setProject] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     async function fetchProject() {
@@ -57,15 +59,21 @@ const SingleProject = () => {
 
             <div className="flex items-center gap-2 shrink-0">
               <span
-                className={`text-xs font-medium capitalize rounded-full px-3 py-1 ${
-                  statusStyles[project.status] || "bg-gray-100 text-gray-600"
-                }`}
+                className={`text-xs font-medium capitalize rounded-full px-3 py-1 ${statusStyles[project.status] || "bg-gray-100 text-gray-600"
+                  }`}
               >
                 {project.status}
               </span>
 
               {isOwner && (
                 <>
+                  <button
+                    onClick={() => setShowModal(true)}
+                    className="cursor-pointer flex items-center gap-1 p-2 rounded-lg border border-gray-300 text-gray-500 hover:border-primary hover:text-primary transition-colors text-xs font-medium"
+                    title="Invite a developer"
+                  >
+                    <Plus size={16} />
+                  </button>
                   <Link
                     to={`/projects/${project._id}/edit`}
                     className="p-2 rounded-lg border border-gray-300 text-gray-500 hover:border-primary hover:text-primary transition-colors"
@@ -83,6 +91,11 @@ const SingleProject = () => {
                 </>
               )}
             </div>
+            <InviteModal
+              projectId={project?._id}
+              isOpen={showModal}
+              onClose={() => setShowModal(false)}
+            />
           </div>
 
           {/* Category */}
