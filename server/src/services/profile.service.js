@@ -49,22 +49,15 @@ export const updateProfileService = async (userId, profileData) => {
 
 
 export const getAllProfilesService = async (queryData) => {
-
     const { search, skills, availability, page, limit } = queryData;
-
     const filter = {};
 
     if (search) {
-        filter.headline = {
-            $regex: search,
-            $options: "i"
-        };
+        filter.headline = { $regex: search, $options: "i" };
     }
-
     if (skills) {
         filter.skills = skills;
     }
-
     if (availability) {
         filter.availability = availability;
     }
@@ -74,7 +67,8 @@ export const getAllProfilesService = async (queryData) => {
     const profiles = await Profile
         .find(filter)
         .skip(skip)
-        .limit(limit);
+        .limit(limit)
+        .populate("user", "name email");
 
     return profiles;
 };

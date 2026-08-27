@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
-// Placeholder data - this will be replaced with real backend data
-const placeholderUser = { name: "Hamza" };
 
 const Dashboard = () => {
 
@@ -51,7 +49,7 @@ const Dashboard = () => {
       {/* Header */}
       <div className="mb-10">
         <h1 className="text-2xl font-bold text-gray-900">
-          Welcome back, {placeholderUser.name}
+          Welcome back, {localStorage.getItem("userName")}
         </h1>
         <p className="text-gray-500 mt-1">Here's what's happening on Devnetic.</p>
       </div>

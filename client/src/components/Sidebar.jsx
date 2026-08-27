@@ -1,11 +1,12 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { LayoutDashboard, User, FolderKanban, Mail, LogOut } from "lucide-react";
+import { LayoutDashboard, User, FolderKanban, Mail, LogOut, Users } from "lucide-react";
 import SiteLogo from "../assets/Devnetic Logo.png";
 
 const navItems = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
   { label: "My Profile", path: "/profile", icon: User },
   { label: "Projects", path: "/projects", icon: FolderKanban },
+  { label: "Developers", path: "/developers", icon: Users },
   { label: "Invitations", path: "/invitations", icon: Mail },
 ];
 
