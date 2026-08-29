@@ -57,9 +57,9 @@ export const respondToInvitationService = async (incomingInviteId, userId, statu
 }
 
 export const getMyInvitationService = async (invitedUserId) => {
-
-    const invitationDoc = await Invitation.find({invitedUser: invitedUserId});
-
+    const invitationDoc = await Invitation.find({
+        invitedUser: invitedUserId,
+        status: "pending",
+    });
     return invitationDoc;
-
 }

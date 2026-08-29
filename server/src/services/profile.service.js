@@ -13,7 +13,7 @@ export const createProfileService = async (profileData) => {
 
 export const getProfileByUserIdService = async (userId) => {
 
-    const profile = await Profile.findOne({ user: userId });
+    const profile = await Profile.findOne({ user: userId }).populate("user", "name email");;
 
     if (!profile) {
         throw new AppError("Profile not found", 404);

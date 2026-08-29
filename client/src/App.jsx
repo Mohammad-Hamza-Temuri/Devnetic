@@ -14,6 +14,7 @@ import CreateProject from './pages/CreateProject';
 import EditProject from './pages/EditProject';
 import Invitations from './pages/Invitations';
 import Developers from './pages/Developers';
+import DeveloperProfile from './pages/DeveloperProfile';
 
 function App() {
 
@@ -33,6 +34,7 @@ function App() {
           <Route path="/projects/:id/edit" element={<EditProject />} />
           <Route path="/invitations" element={<Invitations />} />
           <Route path="/developers" element={<Developers />} />
+          <Route path="/developers/:userId" element={<DeveloperProfile />} />
         </Route>
       </Routes>
     </BrowserRouter>
