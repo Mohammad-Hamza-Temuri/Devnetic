@@ -5,15 +5,17 @@ import SiteLogoTransparent from "../assets/Devnetic-Logo-Transparent.png"
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import { useSearchParams } from "react-router-dom"
 
 const Login = () => {
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-
+    const redirectTo = searchParams.get("redirect") || "/dashboard";
     async function handleSubmit(e) {
         e.preventDefault();
         setError("");
@@ -36,7 +38,7 @@ const Login = () => {
             localStorage.setItem("token", data.token);
             localStorage.setItem("userId", data.user.id);
             localStorage.setItem("userName", data.user.name);
-            navigate("/dashboard");
+            navigate(redirectTo);
 
         } catch (err) {
             console.error("Login request failed:", err);
