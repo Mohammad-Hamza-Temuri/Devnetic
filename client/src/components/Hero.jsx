@@ -31,12 +31,12 @@ const Hero = () => {
           >
             Create Your Profile
           </Link>
-          <a
-            href="#"
-            className="rounded-xl py-3 px-8 text-white bg-white/10 border border-white/30 hover:bg-white/20 transition-colors font-medium"
+          <Link 
+          to="/login?redirect=/projects" 
+          className="rounded-xl py-3 px-8 text-white bg-white/10 border border-white/30 hover:bg-white/20 transition-colors font-medium"
           >
             Explore Projects
-          </a>
+          </Link>
         </div>
       </div>
     </section>

@@ -13,7 +13,7 @@ export async function createProfile(req, res, next) {
             skills,
             githubUrl,
             portfolioUrl,
-            linkedinUrl,
+            linkedInUrl,
             availability } = req.body;
 
         const profileData = {
@@ -25,7 +25,7 @@ export async function createProfile(req, res, next) {
             skills,
             githubUrl,
             portfolioUrl,
-            linkedinUrl,
+            linkedInUrl,
             availability
         };
 
@@ -54,7 +54,7 @@ export async function updateProfile(req, res, next) {
 
     try {
         const userId = req.userId;
-        const { headline, bio, location, yearsOfExperience, skills, githubUrl, portfolioUrl, linkedinUrl, availability } = req.body;
+        const { headline, bio, location, yearsOfExperience, skills, githubUrl, portfolioUrl, linkedInUrl, availability } = req.body;
         const profileData = {
             headline,
             bio,
@@ -63,7 +63,7 @@ export async function updateProfile(req, res, next) {
             skills,
             githubUrl,
             portfolioUrl,
-            linkedinUrl,
+            linkedInUrl,
             availability
         };
         const user = await updateProfileService(userId, profileData);
