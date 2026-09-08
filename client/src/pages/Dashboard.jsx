@@ -114,7 +114,13 @@ const Dashboard = () => {
                 >
                   <h3 className="font-semibold text-gray-900">{project.title}</h3>
                   <p className="text-sm text-gray-500 mt-1">{project.category}</p>
-                  <div className="flex flex-wrap gap-2 mt-3">
+                  <p className="flex items-center gap-1.5 text-xs text-gray-400 mt-2">
+                    <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[10px]">
+                      {project.owner?.name?.charAt(0).toUpperCase() || "?"}
+                    </span>
+                    Posted by {project.owner?.name}
+                  </p>
+                  {/* <div className="flex flex-wrap gap-2 mt-3">
                     {project.techStack.map((tech) => (
                       <span
                         key={tech}
@@ -123,7 +129,7 @@ const Dashboard = () => {
                         {tech}
                       </span>
                     ))}
-                  </div>
+                  </div> */}
                 </div>
               </Link>
             ))}

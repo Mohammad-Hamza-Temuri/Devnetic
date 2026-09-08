@@ -18,12 +18,12 @@ export const createProjectService = async (owner, projectData) => {
 };
 
 export const getAllProjectsService = async () => {
-    const projects = await Project.find().sort({ createdAt: -1 });
+    const projects = await Project.find().sort({ createdAt: -1 }).populate("owner", "name email");
     return projects;
 };
 
 export const getProjectByIdService = async (projectId) => {
-    const project = await Project.findById(projectId);
+    const project = await Project.findById(projectId).populate("owner", "name email");;
 
     if (!project) {
         throw new AppError("Project not found", 404)

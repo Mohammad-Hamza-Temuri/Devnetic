@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { LayoutDashboard, User, FolderKanban, Mail, LogOut, Users } from "lucide-react";
+import { LayoutDashboard, User, FolderKanban, Mail, LogOut, Users, X } from "lucide-react";
 import SiteLogo from "../assets/Devnetic Logo.png";
 
 const navItems = [
@@ -10,25 +10,55 @@ const navItems = [
   { label: "Invitations", path: "/invitations", icon: Mail },
 ];
 
-const Sidebar = () => {
+export default function Sidebar({ isOpen, onClose }) {
   const navigate = useNavigate();
   const location = useLocation();
 
   function handleLogout() {
     localStorage.removeItem("token");
     navigate("/login");
+    if (onClose) onClose();
   }
 
   return (
-    <aside className="w-64 h-screen bg-[#00000B] border-r border-gray-100 flex flex-col justify-between fixed left-0 top-0">
-      <div>
-        {/* Logo */}
-        <Link to="/dashboard" className="flex items-center gap-2 px-6 py-6">
-          <img src={SiteLogo} alt="Devnetic logo" className="w-52" />
-        </Link>
+    <>
+      {/* Mobile backdrop overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={onClose}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={`fixed left-0 top-0 h-screen w-64 bg-[#00000B] border-r border-gray-100 flex flex-col z-50 transform transition-transform duration-200 ease-in-out ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:translate-x-0`}
+      >
+        {/* Top bar: close button + logo */}
+        <div className="flex items-center justify-between px-4 lg:px-6 py-4 border-b border-gray-800">
+          {/* Close button — mobile only */}
+          <button
+            onClick={onClose}
+            className="lg:hidden text-white/70 hover:text-white p-1 rounded transition-colors"
+            aria-label="Close menu"
+          >
+            <X size={20} />
+          </button>
+
+          {/* Logo */}
+          <Link
+            to="/dashboard"
+            onClick={onClose}
+            className="flex items-center gap-2"
+          >
+            <img src={SiteLogo} alt="Devnetic logo" className="w-40 lg:w-52" />
+          </Link>
+        </div>
 
         {/* Nav links */}
-        <nav className="flex flex-col gap-1 px-4">
+        <nav className="flex flex-col gap-1 px-4 lg:px-6 py-4 flex-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
@@ -37,6 +67,7 @@ const Sidebar = () => {
               <Link
                 key={item.path}
                 to={item.path}
+                onClick={onClose}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                   isActive
                     ? "bg-white text-primary"
@@ -49,20 +80,19 @@ const Sidebar = () => {
             );
           })}
         </nav>
-      </div>
 
-      {/* Logout */}
-      <div className="px-4 pb-6">
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium bg-red-500/10 text-red-500  hover:bg-white transition-colors cursor-pointer"
-        >
-          <LogOut size={18} />
-          Logout
-        </button>
-      </div>
-    </aside>
+        {/* Logout */}
+        <div className="px-4 lg:px-6 pb-6">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium bg-red-500/10 text-red-500 hover:bg-white hover:text-red-500 transition-colors cursor-pointer"
+          >
+            <LogOut size={18} />
+            Logout
+          </button>
+        </div>
+      </aside>
+    </>
   );
-};
+}
 
-export default Sidebar;
