@@ -1,5 +1,13 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { LayoutDashboard, User, FolderKanban, Mail, LogOut, Users, X } from "lucide-react";
+import {
+  LayoutDashboard,
+  User,
+  FolderKanban,
+  Mail,
+  LogOut,
+  Users,
+  X,
+} from "lucide-react";
 import SiteLogo from "../assets/Devnetic Logo.png";
 
 const navItems = [
@@ -17,7 +25,9 @@ export default function Sidebar({ isOpen, onClose }) {
   function handleLogout() {
     localStorage.removeItem("token");
     navigate("/login");
-    if (onClose) onClose();
+    if (onClose) {
+      onClose();
+    }
   }
 
   return (
@@ -36,17 +46,8 @@ export default function Sidebar({ isOpen, onClose }) {
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0`}
       >
-        {/* Top bar: close button + logo */}
+        {/* Top bar: logo on left, close button on right */}
         <div className="flex items-center justify-between px-4 lg:px-6 py-4 border-b border-gray-800">
-          {/* Close button — mobile only */}
-          <button
-            onClick={onClose}
-            className="lg:hidden text-white/70 hover:text-white p-1 rounded transition-colors"
-            aria-label="Close menu"
-          >
-            <X size={20} />
-          </button>
-
           {/* Logo */}
           <Link
             to="/dashboard"
@@ -55,14 +56,22 @@ export default function Sidebar({ isOpen, onClose }) {
           >
             <img src={SiteLogo} alt="Devnetic logo" className="w-40 lg:w-52" />
           </Link>
+
+          {/* Close button — mobile only */}
+          <button
+            onClick={onClose}
+            className="lg:hidden text-white/70 hover:text-white p-1 rounded transition-colors"
+            aria-label="Close menu"
+          >
+            <X size={20} />
+          </button>
         </div>
 
-        {/* Nav links */}
+        {/* Navigation links */}
         <nav className="flex flex-col gap-1 px-4 lg:px-6 py-4 flex-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
-
             return (
               <Link
                 key={item.path}
@@ -95,4 +104,3 @@ export default function Sidebar({ isOpen, onClose }) {
     </>
   );
 }
-
