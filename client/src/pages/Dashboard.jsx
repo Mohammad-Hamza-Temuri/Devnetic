@@ -89,9 +89,12 @@ const Dashboard = () => {
                 You have {invitations.length} pending invitation(s).
               </p>
             )}
-            <button className="mt-4 w-full rounded-xl py-2 border border-gray-300 text-gray-700 hover:border-primary hover:text-primary transition-colors text-sm font-medium">
+            <Link 
+              to="/invitations" 
+              className="mt-4 w-full block text-center rounded-xl py-2 border border-gray-300 text-gray-700 hover:border-primary hover:text-primary transition-colors text-sm font-medium cursor-pointer"
+            >
               View All
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -120,16 +123,6 @@ const Dashboard = () => {
                     </span>
                     Posted by {project.owner?.name}
                   </p>
-                  {/* <div className="flex flex-wrap gap-2 mt-3">
-                    {project.techStack.map((tech) => (
-                      <span
-                        key={tech}
-                        className="text-xs bg-gray-100 text-gray-600 rounded-full px-3 py-1"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div> */}
                 </div>
               </Link>
             ))}

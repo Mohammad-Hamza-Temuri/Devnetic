@@ -10,17 +10,25 @@ const EditProject = () => {
 
     const [loading, setLoading] = useState(false);
     const [title, setTitle] = useState("");
-    const [description, setDescription,] = useState("");
+    const [description, setDescription] = useState("");
     const [category, setCategory] = useState("");
     const [requiredSkills, setRequiredSkills] = useState("");
     const [techStack, setTechStack] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [repositoryUrl, setRepositoryUrl] = useState("");
+    const [descriptionError, setDescriptionError] = useState("");
 
     async function handleSubmit(e) {
         e.preventDefault()
         setLoading(true);
+
+        // Validate description length
+        if (description.length > 1500) {
+            toast.error("Description cannot exceed 1500 characters");
+            setLoading(false);
+            return;
+        }
 
         const requiredSkillsArray = requiredSkills
             .split(",")
@@ -61,13 +69,24 @@ const EditProject = () => {
         navigate(`/projects/${id}`);
     }
 
+    // Handle description change with validation
+    const handleDescriptionChange = (e) => {
+        const value = e.target.value;
+        if (value.length <= 1500) {
+            setDescription(value);
+            setDescriptionError("");
+        } else {
+            setDescriptionError(`Maximum 1500 characters allowed. Current: ${value.length}`);
+        }
+    };
+
     useEffect(() => {
         async function fetchProject() {
             const res = await fetch(`http://localhost:3000/projects/${id}`);
             const data = await res.json();
 
             setTitle(data.title);
-            setDescription(data.description);
+            setDescription(data.description || "");
             setCategory(data.category);
             setRequiredSkills(data.requiredSkills.join(", "));
             setTechStack(data.techStack.join(", "));
@@ -92,14 +111,23 @@ const EditProject = () => {
                     className="w-full bg-white rounded-xl border border-gray-300 py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary"
                 />
 
-                <label className="block text-[16px] font-bold text-gray-700 mb-1">Description</label>
-                <input
-                    type="text"
+                <label className="block text-[16px] font-bold text-gray-700 mb-1">
+                    Description
+                    <span className="font-normal text-gray-400 text-sm ml-2">
+                        ({description.length}/1500 characters)
+                    </span>
+                </label>
+                <textarea
                     value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Description"
-                    className="w-full bg-white rounded-xl border border-gray-300 py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary"
+                    onChange={handleDescriptionChange}
+                    placeholder="Describe your project in detail..."
+                    rows={6}
+                    className="w-full bg-white rounded-xl border border-gray-300 py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary resize-y min-h-37.5"
+                    style={{ whiteSpace: 'pre-wrap' }}
                 />
+                {descriptionError && (
+                    <p className="text-red-500 text-sm mt-1">{descriptionError}</p>
+                )}
 
                 <label className="block text-[16px] font-bold text-gray-700 mb-1">Category</label>
                 <input
