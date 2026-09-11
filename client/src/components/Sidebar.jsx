@@ -7,6 +7,7 @@ import {
   LogOut,
   Users,
   X,
+  Home,
 } from "lucide-react";
 import SiteLogo from "../assets/Devnetic Logo.png";
 
@@ -24,6 +25,8 @@ export default function Sidebar({ isOpen, onClose }) {
 
   function handleLogout() {
     localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userName");
     navigate("/login");
     if (onClose) {
       onClose();
@@ -90,8 +93,17 @@ export default function Sidebar({ isOpen, onClose }) {
           })}
         </nav>
 
-        {/* Logout */}
-        <div className="px-4 lg:px-6 pb-6">
+        {/* Bottom section: Back to Home + Logout */}
+        <div className="px-4 lg:px-6 pb-6 space-y-2">
+          <Link
+            to="/"
+            onClick={onClose}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+          >
+            <Home size={18} />
+            Back to Home
+          </Link>
+
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium bg-red-500/10 text-red-500 hover:bg-white hover:text-red-500 transition-colors cursor-pointer"

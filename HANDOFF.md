@@ -2,7 +2,7 @@
 
 > **Purpose:** This document exists so that anyone (the original author or another developer) can clone this repository and fully understand **how the app is built, how to run it, and how it works** — without having to reverse-engineer the code.
 >
-> **Last verified against:** commit `6af65d9` on branch `main`.
+> **Last verified against:** commit `59338fb` on branch `main`.
 >
 > **Stack at a glance:** React 19 (Vite) frontend + Express 5 / Mongoose 9 (MongoDB Atlas) backend.
 
@@ -33,6 +33,7 @@ Devnetic/
 │   ├── vite.config.js        # plugins: @vitejs/plugin-react, @tailwindcss/vite
 │   ├── eslint.config.js      # flat config (js.recommended, react-hooks, react-refresh)
 │   ├── index.html            # root HTML; boots /src/main.jsx
+│   ├── README.md            # Default Vite starter README (not app-specific; see HANDOFF.md instead).
 │   ├── public/
 │   │   ├── favicon.svg
 │   │   └── icons.svg         # inline <symbol> SVG icons (github, discord, x, ...)
@@ -249,8 +250,8 @@ Routing is centralised in one `<Routes>` tree. Unauthenticated pages (`/`, `/log
 | Component | File | Responsibility |
 |-----------|------|----------------|
 | `ProtectedRoute` | `ProtectedRoute.jsx` | Auth-gate wrapper for routes. |
-| `DashboardLayout` | `DashboardLayout.jsx` | Fixed sidebar + `<Outlet />`. |
-| `Sidebar` | `Sidebar.jsx` | Nav links (Dashboard, My Profile, Projects, Developers, Invitations) + Logout. Fixed dark sidebar. |
+| `DashboardLayout` | `DashboardLayout.jsx` | Mobile top bar (hamburger menu button, fixed `z-30`, `lg:hidden`) hosting the slide-in `Sidebar`; responsive `<main>` (`lg:ml-64 pt-14 lg:pt-0`) wrapping `<Outlet />`. |
+| `Sidebar` | `Sidebar.jsx` | Off-canvas slide-in sidebar driven by `isOpen`/`onClose` props: backdrop overlay + X close button on mobile (`lg:hidden`), always-anchored on desktop (`lg:translate-x-0`). Active-link highlighting via `useLocation`, logo image (`Devnetic Logo.png`), nav links (Dashboard, My Profile, Projects, Developers, Invitations) + Logout. `bg-[#00000B]` dark theme. |
 | `Header` | `Header.jsx` | Landing-page top nav (logo, How It Works, Login, Sign Up). |
 | `Footer` | `Footer.jsx` | Landing-page footer with links. |
 | `Hero` | `Hero.jsx` | Hero section w/ CTA buttons. |
@@ -270,12 +271,14 @@ Routing is centralised in one `<Routes>` tree. Unauthenticated pages (`/`, `/log
 - **No state manager**: state is plain `useState`/`useEffect`; there is no Redux/Zustand/Context beyond router. **The API base URL `http://localhost:3000` is hardcoded in every fetch call** (no shared axios/client wrapper).
 
 ### 7.4 Frontend <- > Backend Data Flow (key pages)
-- **Dashboard** — `GET /profile/:userId` (from `localStorage.userId` -> shows headline/skills/availability), `GET /projects` (shows newest 4 as cards linking to `/projects/:id`), `GET /invitations/me` (shows pending count).
+- **Dashboard** — `GET /profile/:userId` (from `localStorage.userId`) -> profile card (headline, skills badges, availability) with an "Edit Profile" link; `GET /projects` -> newest 4 projects as cards (title, category, owner avatar initial + "Posted by {name}") linking to `/projects/:id`; `GET /invitations/me` -> pending-invitation count with a "View All" link to `/invitations`.
 - **Profile (edit)** — `GET /profile/:userId` to pre-fill; `PUT /profile` to save. *(caveat: uses a plain text input for skills, not `SkillMultiSelect`; throws "Profile not found" (404) if no profile row exists yet.)*
-- **Developers** — `GET /profile?search=...&skills=...&availability=...` debounced 500ms; the `SkillMultiSelect` controls the `skills` array.
-- **Projects / Create / Edit / Single** — CRUD against `/projects` and `/projects/:id`. Create/Edit split comma-separated `requiredSkills`/`techStack` strings into arrays client-side.
+- **Developers** — `GET /profile?search=...&skills=...&availability=...` debounced 500ms; the `SkillMultiSelect` controls the `skills` array. Desktop shows a sticky right-side filter panel (`lg:sticky`); mobile toggles a slide-up `FilterModal` (backdrop + handle-bar, "Apply Filters" button). Filters support free-text search, multi-skill selection, and **both** "Available" and "Unavailable" availability checkboxes plus a "Clear All" button. Result cards display developer name, headline, location, experience, an availability badge, up-to-5 skills (+ "N more"), and social links (GitHub / Portfolio / LinkedIn); empty state "No developers found matching your criteria."
+- **Projects / Create / Edit** — `GET /projects` grid list (title, category, owner avatar initial + "Posted by {name}", **tech-stack tags**); empty state "No projects yet." `CreateProject`/`EditProject` split comma-separated `requiredSkills`/`techStack` into arrays client-side; `EditProject` enforces a 1500-char description limit and flashes `react-hot-toast` success/error feedback.
 - **Invitations** — `GET /invitations/me` lists pending; Accept/Reject -> `PUT /invitations/:id/respond`, then optimistically removes the item from the list.
-- **SingleProject -> InviteModal** — modal calls `GET /profile?search=...` and `POST /invitations/:projectId`.
+- **SingleProject (/projects/:id)** — full project detail page: loading spinner; graceful "Project not found" fallback (with a Back-to-Projects link); back button; color-coded status badge (`active`/`completed`/`archived` with emoji icons); owner-only desktop actions (Invite / Edit / Delete buttons) plus a mobile-only `MoreVertical` kebab dropdown with the same actions; title, creation date, category badge, "Posted by" owner (avatar + name); description panel; tech-stack tags; required-skills tags; repository link button (opens in new tab); and a full comment UI (see below).
+- **SingleProject -> Comments** — `GET /comments/:projectId` list (author avatar initial, name, formatted date, text); post via `POST /comments/:projectId` with `{ text }` (Bearer token; `react-hot-toast` feedback); delete via `DELETE /comments/:commentId` (author-only, confirm dialog, optimistic removal).
+- **SingleProject -> InviteModal** — modal calls `GET /profile?search=...` (debounced 500ms) and `POST /invitations/:projectId` with `{ invitedUserId }`; shows a `react-hot-toast` on success and closes the modal.
 
 ## 8. Gotchas & Known Limitations
 
@@ -284,10 +287,10 @@ Routing is centralised in one `<Routes>` tree. Unauthenticated pages (`/`, `/log
 | Hardcoded API URL | `http://localhost:3000` is pasted into every client `fetch()` call. No shared API client/env-based base. |
 | `Profile` edit form | Uses a plain text input for skills instead of `SkillMultiSelect`; PUTs even when no profile exists yet (404). |
 | Invitations list | `/invitations/me` returns non-populated docs, so `Invitations.jsx` displays `Project {invitation.project}` (raw ObjectId), not the project title. |
-| Comments | Backend CRUD for comments exists (`/comments`), but **no comment UI** is wired into the frontend. |
+| Comments | Backend CRUD for comments exists (`/comments`) and is **now fully wired into the frontend**: `SingleProject.jsx` renders a comment list (`GET /comments/:projectId`), a post form (`POST /comments/:projectId` with `{ text }`), and author-only delete (`DELETE /comments/:commentId`), with `react-hot-toast` feedback on every action. |
 | Tasks | Backend CRUD for tasks exists (`/tasks`) but **no task UI**, and tasks aren't linked to projects in the model. |
 | Auth storage | JWT lives in `localStorage` (no refresh-token flow, no httpOnly cookie, no server re-validation per protected fetch). Fine for an MVP. |
-| Missing error UI | Navigating to `/projects/:nonexistent` or `/developers/:nonexistent` renders nothing graceful; no global error boundaries. |
+| Missing error UI | `/developers/:nonexistent` renders nothing (`DeveloperProfile.jsx` has no fallback when the profile fetch fails); `/projects/:nonexistent` does NOT hit `SingleProject`'s "Project not found" fallback because the 404 JSON body is stored directly as `project` (no `res.ok` check in `fetchProject`), so a broken detail page renders instead. No global error boundaries. |
 | `.env` secrets committed | `server/.env` (MongoDB Atlas URI + placeholder JWT secret) is committed. Rotate `JWT_SECRET` before deploying; avoid committing real secrets going forward. |
 | Minor lint dust | `project.service.js` has stray `;;` after `getProjectByIdService` and inside `findById(...)`. Cosmetic only. |
 
@@ -320,11 +323,12 @@ A full manual smoke test:
 4. `/projects/new` -> create a project -> verify on `/projects` and `/projects/:id`.
 5. `/developers` -> search/filter the directory.
 6. (As project owner) open project -> **Invite Developer** -> pick someone -> `/invitations` on their side shows the invite -> Accept -> project membership created.
+7. (On a project detail page, as any logged-in user) post a comment via the "Write a comment..." box -> verify it appears in the list; delete your own comment (Trash icon) -> verify it's removed.
 
 ## 10. File Manifest (every source file)
 
 ### Client
-- `client/package.json`, `client/vite.config.js`, `client/eslint.config.js`, `client/index.html`
+- `client/package.json`, `client/vite.config.js`, `client/eslint.config.js`, `client/index.html`, `client/README.md`
 - `client/src/main.jsx`, `client/src/App.jsx`, `client/src/App.css`, `client/src/index.css`
 - `client/src/components/` — `ProtectedRoute.jsx`, `DashboardLayout.jsx`, `Sidebar.jsx`, `Header.jsx`, `Footer.jsx`, `Hero.jsx`, `HowItWorks.jsx`, `WhatIsDevnetic.jsx`, `FinalCTA.jsx`, `Collaboration.jsx`, `InviteModal.jsx`, `SkillMultiSelect.jsx`
 - `client/src/pages/` — `Dashboard.jsx`, `Profile.jsx`, `Projects.jsx`, `SingleProject.jsx`, `CreateProject.jsx`, `EditProject.jsx`, `Invitations.jsx`, `Developers.jsx`, `DeveloperProfile.jsx`, `Landing.jsx`, `Login.jsx`, `Signup.jsx`
@@ -344,4 +348,4 @@ A full manual smoke test:
 
 ## 11. Summary
 
-Devnetic is a complete, runnable **MVP of a developer collaboration platform** built on a standard, well-organized stack: **React 19 + Vite + Tailwind CSS** on the frontend and **Express 5 + Mongoose 9 + MongoDB Atlas** on the backend. The backend enforces a clean routes -> controllers -> services split with centralised error handling and JWT auth; the frontend is a single `react-router-dom` v7 tree with a protected dashboard area, responsive Tailwind styling, debounced search/filtering, optimistic UI updates, and toast notifications. It supports the full project lifecycle (create / view / edit / delete), developer profiles, an invite/respond collaboration flow, and a comment/task API surface that is not yet exposed in the UI.
+Devnetic is a complete, runnable **MVP of a developer collaboration platform** built on a standard, well-organized stack: **React 19 + Vite + Tailwind CSS** on the frontend and **Express 5 + Mongoose 9 + MongoDB Atlas** on the backend. The backend enforces a clean routes -> controllers -> services split with centralised error handling and JWT auth; the frontend is a single `react-router-dom` v7 tree with a protected dashboard area, responsive Tailwind styling, debounced search/filtering, optimistic UI updates, and toast notifications. It supports the full project lifecycle (create / view / edit / delete), developer profiles, an invite/respond collaboration flow, and a comment system now fully exposed on the project detail page (list / post / author-only delete via the `/comments` API, with `react-hot-toast` feedback). A standalone `/tasks` API also exists but remains unexposed in the UI.
