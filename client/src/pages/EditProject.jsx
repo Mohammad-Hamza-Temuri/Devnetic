@@ -1,3 +1,4 @@
+import API_URL from "../config/api.js";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -41,7 +42,7 @@ const EditProject = () => {
             .filter(Boolean);
 
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://localhost:3000/projects/${id}`, {
+        const res = await fetch(`${API_URL}/projects/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -82,7 +83,7 @@ const EditProject = () => {
 
     useEffect(() => {
         async function fetchProject() {
-            const res = await fetch(`http://localhost:3000/projects/${id}`);
+            const res = await fetch(`${API_URL}/projects/${id}`);
             const data = await res.json();
 
             setTitle(data.title);

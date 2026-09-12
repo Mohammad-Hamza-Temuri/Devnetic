@@ -1,3 +1,4 @@
+import API_URL from "../config/api.js";
 import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 
@@ -12,14 +13,14 @@ const Dashboard = () => {
     async function fetchProfile() {
       const userId = localStorage.getItem("userId");
 
-      const res = await fetch(`http://localhost:3000/profile/${userId}`);
+      const res = await fetch(`${API_URL}/profile/${userId}`);
       const data = await res.json();
 
       setProfile(data);
     }
 
     async function fetchProjects() {
-      const res = await fetch("http://localhost:3000/projects");
+      const res = await fetch(`${API_URL}/projects`);
       const data = await res.json();
 
       setProjects(data)
@@ -27,7 +28,7 @@ const Dashboard = () => {
 
     async function fetchInvitaions() {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:3000/invitations/me", {
+      const res = await fetch(`${API_URL}/invitations/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

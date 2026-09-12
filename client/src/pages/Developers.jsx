@@ -1,3 +1,4 @@
+import API_URL from "../config/api.js";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { MapPin, Briefcase, Github, Globe, Linkedin, Filter, X } from "lucide-react";
@@ -143,7 +144,7 @@ const Developers = () => {
       if (availabilityFilter) params.append("availability", availabilityFilter);
       skillFilter.forEach((skill) => params.append("skills", skill));
 
-      const res = await fetch(`http://localhost:3000/profile?${params.toString()}`);
+      const res = await fetch(`${API_URL}/profile?${params.toString()}`);
       const data = await res.json();
       setDevelopers(data);
     }, 500);

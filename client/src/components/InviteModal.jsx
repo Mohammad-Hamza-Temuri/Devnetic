@@ -1,3 +1,4 @@
+import API_URL from "../config/api.js";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { X, Search } from "lucide-react";
@@ -16,7 +17,7 @@ const InviteModal = ({ projectId, isOpen, onClose }) => {
             }
 
             setLoading(true);
-            const res = await fetch(`http://localhost:3000/profile?search=${searchTerm}`);
+            const res = await fetch(`${API_URL}/profile?search=${searchTerm}`);
             const data = await res.json();
             setResults(data);
             setLoading(false);
@@ -28,7 +29,7 @@ const InviteModal = ({ projectId, isOpen, onClose }) => {
     async function handleInvite(userId) {
         const token = localStorage.getItem("token");
 
-        const res = await fetch(`http://localhost:3000/invitations/${projectId}`, {
+        const res = await fetch(`${API_URL}/invitations/${projectId}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

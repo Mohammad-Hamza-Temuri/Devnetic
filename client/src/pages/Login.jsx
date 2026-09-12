@@ -1,3 +1,4 @@
+import API_URL from "../config/api.js";
 import { useState } from "react";
 import LoginImage from "../assets/Devnetic-login-signup-page.webp";
 import SiteLogo from "../assets/Devnetic Logo.png"
@@ -22,7 +23,7 @@ const Login = () => {
         setLoading(true);
 
         try {
-            const res = await fetch("http://localhost:3000/auth/login", {
+            const res = await fetch(`${API_URL}/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),

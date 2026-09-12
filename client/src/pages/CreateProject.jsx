@@ -1,3 +1,4 @@
+import API_URL from "../config/api.js";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -30,7 +31,7 @@ const CreateProject = () => {
 
         const token = localStorage.getItem("token");
 
-        const res = await fetch("http://localhost:3000/projects", {
+        const res = await fetch(`${API_URL}/projects`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

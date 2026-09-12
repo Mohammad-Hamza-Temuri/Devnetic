@@ -1,3 +1,4 @@
+import API_URL from "../config/api.js";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
@@ -20,7 +21,7 @@ const Profile = () => {
 
         const token = localStorage.getItem("token");
 
-        const res = await fetch("http://localhost:3000/profile", {
+        const res = await fetch(`${API_URL}/profile`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -52,7 +53,7 @@ const Profile = () => {
     useEffect(() => {
         async function fetchProfile() {
             const userId = localStorage.getItem("userId");
-            const res = await fetch(`http://localhost:3000/profile/${userId}`)
+            const res = await fetch(`${API_URL}/profile/${userId}`)
 
             const data = await res.json();
 

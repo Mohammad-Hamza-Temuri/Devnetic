@@ -1,3 +1,4 @@
+import API_URL from "../config/api.js";
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -38,7 +39,7 @@ const SingleProject = () => {
     async function fetchProject() {
       setIsLoading(true);
       try {
-        const res = await fetch(`http://localhost:3000/projects/${id}`);
+        const res = await fetch(`${API_URL}/projects/${id}`);
         const data = await res.json();
         setProject(data);
       } catch {
@@ -54,7 +55,7 @@ const SingleProject = () => {
   useEffect(() => {
     async function fetchComments() {
       try {
-        const res = await fetch(`http://localhost:3000/comments/${id}`);
+        const res = await fetch(`${API_URL}/comments/${id}`);
         if (!res.ok) {
           throw new Error("Failed to fetch comments");
         }
@@ -79,7 +80,7 @@ const SingleProject = () => {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch(`http://localhost:3000/projects/${id}`, {
+      const res = await fetch(`${API_URL}/projects/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -127,7 +128,7 @@ const SingleProject = () => {
     setIsSubmitting(true);
 
     try {
-      const res = await fetch(`http://localhost:3000/comments/${id}`, {
+      const res = await fetch(`${API_URL}/comments/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -145,7 +146,7 @@ const SingleProject = () => {
       setNewComment("");
       
       // Refetch comments to get properly populated user data
-      const refreshedRes = await fetch(`http://localhost:3000/comments/${id}`);
+      const refreshedRes = await fetch(`${API_URL}/comments/${id}`);
       if (refreshedRes.ok) {
         const refreshedComments = await refreshedRes.json();
         setComments(refreshedComments);
@@ -169,7 +170,7 @@ const SingleProject = () => {
     }
 
     try {
-      const res = await fetch(`http://localhost:3000/comments/${commentId}`, {
+      const res = await fetch(`${API_URL}/comments/${commentId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

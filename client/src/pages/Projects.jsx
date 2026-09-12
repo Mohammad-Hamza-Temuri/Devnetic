@@ -1,3 +1,4 @@
+import API_URL from "../config/api.js";
 import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 
@@ -7,7 +8,7 @@ const Projects = () => {
 
     useEffect(() => {
         async function fetchProjects() {
-            const res = await fetch("http://localhost:3000/projects");
+            const res = await fetch(`${API_URL}/projects`);
             const data = await res.json();
 
             setProjects(data);

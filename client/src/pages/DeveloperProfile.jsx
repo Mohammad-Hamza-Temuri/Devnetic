@@ -1,3 +1,4 @@
+import API_URL from "../config/api.js";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Github, Globe, Linkedin } from "lucide-react";
@@ -13,7 +14,7 @@ const DeveloperProfile = () => {
 
   useEffect(() => {
     async function fetchProfile() {
-      const res = await fetch(`http://localhost:3000/profile/${userId}`);
+      const res = await fetch(`${API_URL}/profile/${userId}`);
       const data = await res.json();
       setProfile(data);
     }

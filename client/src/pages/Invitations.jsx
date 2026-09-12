@@ -1,3 +1,4 @@
+import API_URL from "../config/api.js";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -8,7 +9,7 @@ const Invitations = () => {
     async function fetchInvitation() {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:3000/invitations/me", {
+      const res = await fetch(`${API_URL}/invitations/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -22,7 +23,7 @@ const Invitations = () => {
 
   async function handleRespond(invitationId, status) {
     const token = localStorage.getItem("token");
-    const res = await fetch(`http://localhost:3000/invitations/${invitationId}/respond`, {
+    const res = await fetch(`${API_URL}/invitations/${invitationId}/respond`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
