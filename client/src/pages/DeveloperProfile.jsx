@@ -1,25 +1,53 @@
 import API_URL from "../config/api.js";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Github, Globe, Linkedin } from "lucide-react";
-
-const availabilityStyles = {
-  available: "bg-green-100 text-green-700",
-  unavailable: "bg-gray-100 text-gray-600",
-};
+import { getAvailabilityOption } from "../config/availability.js";
 
 const DeveloperProfile = () => {
   const { userId } = useParams();
   const [profile, setProfile] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function fetchProfile() {
-      const res = await fetch(`${API_URL}/profile/${userId}`);
-      const data = await res.json();
-      setProfile(data);
+      setIsLoading(true);
+      try {
+        const res = await fetch(`${API_URL}/profile/${userId}`);
+        const data = await res.json();
+        setProfile(res.ok ? data : null);
+      } catch (error) {
+        console.error("Failed to fetch developer profile:", error);
+        setProfile(null);
+      } finally {
+        setIsLoading(false);
+      }
     }
     fetchProfile();
   }, [userId]);
+
+  if (isLoading) {
+    return (
+      <div className="px-6 lg:px-10 py-10 max-w-3xl">
+        <p className="text-gray-500">Loading profile...</p>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="px-6 lg:px-10 py-10 max-w-3xl">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
+          <p className="text-gray-600 mb-4">Developer profile not found</p>
+          <Link to="/developers" className="text-primary hover:underline">
+            ← Back to Developers
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const availabilityOption = getAvailabilityOption(profile.availability);
 
   return (
     <div className="px-6 lg:px-10 py-10 max-w-3xl">
@@ -33,13 +61,15 @@ const DeveloperProfile = () => {
             <div>
               <h1 className="text-2xl font-bold text-gray-900">{profile.user?.name}</h1>
               <p className="text-gray-500">{profile.headline}</p>
-              <span
-                className={`inline-block mt-2 text-xs font-medium capitalize rounded-full px-3 py-1 ${
-                  availabilityStyles[profile.availability] || "bg-gray-100 text-gray-600"
-                }`}
-              >
-                {profile.availability}
-              </span>
+              {profile.availability && (
+                <span
+                  className={`inline-block mt-2 text-xs font-medium capitalize rounded-full px-3 py-1 ${
+                    availabilityOption?.badgeClass || "bg-gray-100 text-gray-600"
+                  }`}
+                >
+                  {availabilityOption?.label || profile.availability}
+                </span>
+              )}
             </div>
           </div>
 

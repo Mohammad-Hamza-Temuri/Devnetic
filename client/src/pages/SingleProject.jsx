@@ -41,8 +41,10 @@ const SingleProject = () => {
       try {
         const res = await fetch(`${API_URL}/projects/${id}`);
         const data = await res.json();
-        setProject(data);
+        // A 404/500 body is an error message, not a project
+        setProject(res.ok ? data : null);
       } catch {
+        setProject(null);
         toast.error("Failed to load project");
       } finally {
         setIsLoading(false);
@@ -71,7 +73,7 @@ const SingleProject = () => {
     }
   }, [id]);
 
-  const isOwner = project && project.owner._id === localStorage.getItem("userId");
+  const isOwner = Boolean(project?.owner?._id) && project.owner._id === localStorage.getItem("userId");
 
   async function handleDelete() {
     const confirmed = window.confirm("Are you sure you want to delete this project?");

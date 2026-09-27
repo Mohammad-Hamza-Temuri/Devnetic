@@ -15,6 +15,7 @@ import EditProject from './pages/EditProject';
 import Invitations from './pages/Invitations';
 import Developers from './pages/Developers';
 import DeveloperProfile from './pages/DeveloperProfile';
+import NotFound from './pages/NotFound';
 
 function App() {
 
@@ -36,6 +37,7 @@ function App() {
           <Route path="/developers" element={<Developers />} />
           <Route path="/developers/:userId" element={<DeveloperProfile />} />
         </Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   )
