@@ -1,6 +1,7 @@
 import API_URL from "../config/api.js";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import { AVAILABILITY_OPTIONS, normalizeAvailability } from "../config/availability.js";
 
 const Profile = () => {
     const [loading, setLoading] = useState(false);
@@ -101,7 +102,7 @@ const Profile = () => {
                 setGithubUrl(data.githubUrl || "");
                 setPortfolioUrl(data.portfolioUrl || "");
                 setLinkedInUrl(data.linkedInUrl || "");
-                setAvailability(data.availability || "");
+                setAvailability(normalizeAvailability(data.availability));
             } catch (error) {
                 console.error("Profile fetch error:", error);
                 toast.error("Failed to load profile");
@@ -268,9 +269,11 @@ const Profile = () => {
                         className="w-full border border-gray-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         <option value="">Select availability</option>
-                        <option value="available">Available</option>
-                        <option value="busy">Busy</option>
-                        <option value="not-available">Not Available</option>
+                        {AVAILABILITY_OPTIONS.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
                     </select>
                 </div>
 

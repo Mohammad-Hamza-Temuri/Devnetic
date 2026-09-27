@@ -3,11 +3,26 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { MapPin, Briefcase, Github, Globe, Linkedin, Filter, X } from "lucide-react";
 import SkillMultiSelect from "../components/SkillMultiSelect";
+import { AVAILABILITY_OPTIONS, getAvailabilityOption } from "../config/availability.js";
 
-const availabilityStyles = {
-  available: "bg-green-100 text-green-700",
-  unavailable: "bg-red-100 text-red-600",
-};
+// Single-choice availability filter rendered as toggleable checkboxes
+const AvailabilityCheckboxes = ({ availabilityFilter, setAvailabilityFilter, inputClassName }) => (
+  <div className="flex flex-wrap gap-x-4 gap-y-2">
+    {AVAILABILITY_OPTIONS.map((option) => (
+      <label key={option.value} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={availabilityFilter === option.value}
+          onChange={() =>
+            setAvailabilityFilter(availabilityFilter === option.value ? "" : option.value)
+          }
+          className={inputClassName}
+        />
+        {option.label}
+      </label>
+    ))}
+  </div>
+);
 
 // Filter Modal Component for Mobile
 const FilterModal = ({ 
@@ -85,30 +100,11 @@ const FilterModal = ({
           {/* Availability */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Availability</label>
-            <div className="flex gap-4">
-              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={availabilityFilter === "available"}
-                  onChange={() =>
-                    setAvailabilityFilter(availabilityFilter === "available" ? "" : "available")
-                  }
-                  className="accent-primary w-4 h-4"
-                />
-                Available
-              </label>
-              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={availabilityFilter === "unavailable"}
-                  onChange={() =>
-                    setAvailabilityFilter(availabilityFilter === "unavailable" ? "" : "unavailable")
-                  }
-                  className="accent-primary w-4 h-4"
-                />
-                Unavailable
-              </label>
-            </div>
+            <AvailabilityCheckboxes
+              availabilityFilter={availabilityFilter}
+              setAvailabilityFilter={setAvailabilityFilter}
+              inputClassName="accent-primary w-4 h-4"
+            />
           </div>
 
           {/* Apply Button */}
@@ -204,7 +200,7 @@ const Developers = () => {
           )}
 
           {developers.map((developer) => {
-            const availabilityKey = developer.availability?.toLowerCase();
+            const availabilityOption = getAvailabilityOption(developer.availability);
 
             return (
               <Link
@@ -236,13 +232,15 @@ const Developers = () => {
                         {developer.yearsOfExperience} yrs experience
                       </span>
                     )}
-                    <span
-                      className={`text-xs font-medium capitalize rounded-full px-3 py-1 ${
-                        availabilityStyles[availabilityKey] || "bg-gray-100 text-gray-600"
-                      }`}
-                    >
-                      {developer.availability}
-                    </span>
+                    {developer.availability && (
+                      <span
+                        className={`text-xs font-medium capitalize rounded-full px-3 py-1 ${
+                          availabilityOption?.badgeClass || "bg-gray-100 text-gray-600"
+                        }`}
+                      >
+                        {availabilityOption?.label || developer.availability}
+                      </span>
+                    )}
                   </div>
 
                   {/* Skills */}
@@ -327,29 +325,12 @@ const Developers = () => {
             <SkillMultiSelect selectedSkills={skillFilter} onChange={setSkillFilter} />
 
             <label className="block text-sm font-medium text-gray-700 mb-1 mt-4">Availability</label>
-            <div className="flex items-center gap-4 mb-4">
-              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={availabilityFilter === "available"}
-                  onChange={() =>
-                    setAvailabilityFilter(availabilityFilter === "available" ? "" : "available")
-                  }
-                  className="accent-primary"
-                />
-                Available
-              </label>
-              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={availabilityFilter === "unavailable"}
-                  onChange={() =>
-                    setAvailabilityFilter(availabilityFilter === "unavailable" ? "" : "unavailable")
-                  }
-                  className="accent-primary"
-                />
-                Unavailable
-              </label>
+            <div className="mb-4">
+              <AvailabilityCheckboxes
+                availabilityFilter={availabilityFilter}
+                setAvailabilityFilter={setAvailabilityFilter}
+                inputClassName="accent-primary"
+              />
             </div>
 
             {/* Clear Filters Button - Desktop */}

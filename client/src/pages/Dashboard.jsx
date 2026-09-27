@@ -1,6 +1,7 @@
 import API_URL from "../config/api.js";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { getAvailabilityOption } from "../config/availability.js";
 
 const Dashboard = () => {
   const [profile, setProfile] = useState(null);
@@ -124,7 +125,7 @@ const Dashboard = () => {
 
               {profile.availability && (
                 <p className="text-sm text-gray-500 mt-3 capitalize">
-                  {profile.availability}
+                  {getAvailabilityOption(profile.availability)?.label || profile.availability}
                 </p>
               )}
 
