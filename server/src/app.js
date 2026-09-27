@@ -10,7 +10,14 @@ import commentRoutes from "./routes/comment.routes.js";
 
 const app = express();
 
-app.use(cors());
+// CLIENT_URL: comma-separated list of allowed frontend origins.
+// When unset (e.g. local development), every origin is allowed.
+const allowedOrigins = (process.env.CLIENT_URL || "")
+  .split(",")
+  .map((origin) => origin.trim().replace(/\/+$/, ""))
+  .filter(Boolean);
+
+app.use(cors({ origin: allowedOrigins.length > 0 ? allowedOrigins : true }));
 app.use(express.json());
 app.use("/tasks", taskRoutes);
 app.use("/auth", authRoutes);

@@ -1,5 +1,7 @@
 import Project from "../models/Project.js";
 import ProjectMember from "../models/ProjectMember.js";
+import Invitation from "../models/ProjectInvitation.js";
+import Comments from "../models/Comment.js";
 import { AppError } from "../utils/AppError.js";
 
 export const createProjectService = async (owner, projectData) => {
@@ -23,7 +25,7 @@ export const getAllProjectsService = async () => {
 };
 
 export const getProjectByIdService = async (projectId) => {
-    const project = await Project.findById(projectId).populate("owner", "name email");;
+    const project = await Project.findById(projectId).populate("owner", "name email");
 
     if (!project) {
         throw new AppError("Project not found", 404)
@@ -75,6 +77,13 @@ export const deleteProjectService = async (projectId, userId) => {
     }
 
     await Project.findByIdAndDelete(projectId);
+
+    // Remove data that only makes sense while the project exists
+    await Promise.all([
+        ProjectMember.deleteMany({ project: projectId }),
+        Invitation.deleteMany({ project: projectId }),
+        Comments.deleteMany({ project: projectId }),
+    ]);
 
 }
 
