@@ -2,6 +2,7 @@ import API_URL from "../config/api.js";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { X, Search } from "lucide-react";
+import { getAvailabilityOption } from "../config/availability.js";
 
 const InviteModal = ({ projectId, isOpen, onClose }) => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -84,12 +85,15 @@ const InviteModal = ({ projectId, isOpen, onClose }) => {
                     {results.map((profile) => (
                         <button
                             key={profile._id}
-                            onClick={() => handleInvite(profile.user)}
+                            onClick={() => handleInvite(profile.user?._id)}
                             className="flex items-center justify-between text-left p-3 rounded-xl border border-gray-100 hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer"
                         >
                             <div>
-                                <p className="font-medium text-gray-900">{profile.headline}</p>
-                                <p className="text-xs text-gray-500">{profile.availability}</p>
+                                <p className="font-medium text-gray-900">{profile.user?.name}</p>
+                                <p className="text-sm text-gray-600">{profile.headline}</p>
+                                <p className="text-xs text-gray-500">
+                                    {getAvailabilityOption(profile.availability)?.label || profile.availability}
+                                </p>
                             </div>
                             <span className="text-xs text-primary font-medium">Invite</span>
                         </button>

@@ -1,5 +1,6 @@
 import API_URL from "../config/api.js";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const Invitations = () => {
@@ -9,13 +10,24 @@ const Invitations = () => {
     async function fetchInvitation() {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`${API_URL}/invitations/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await res.json();
-      setInvitations(data);
+      try {
+        const res = await fetch(`${API_URL}/invitations/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          toast.error(data.message || "Failed to load invitations");
+          return;
+        }
+
+        setInvitations(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Failed to fetch invitations:", error);
+        toast.error("Failed to load invitations");
+      }
     }
 
     fetchInvitation();
@@ -59,7 +71,21 @@ const Invitations = () => {
           >
             <div>
               <p className="text-sm text-gray-500">You've been invited to join</p>
-              <p className="font-semibold text-gray-900">Project {invitation.project}</p>
+              {invitation.project?._id ? (
+                <Link
+                  to={`/projects/${invitation.project._id}`}
+                  className="font-semibold text-gray-900 hover:text-primary transition-colors"
+                >
+                  {invitation.project.title}
+                </Link>
+              ) : (
+                <p className="font-semibold text-gray-400">Project no longer exists</p>
+              )}
+              {invitation.invitedBy?.name && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Invited by {invitation.invitedBy.name}
+                </p>
+              )}
             </div>
 
             <div className="flex gap-2">
