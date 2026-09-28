@@ -2,7 +2,7 @@
 
 > **Purpose:** This document exists so that anyone (the original author or another developer) can clone this repository and fully understand **how the app is built, how to run it, how to deploy it, and how it works** — without having to reverse-engineer the code.
 >
-> **Last verified against:** branch `development` (2026-09-28), which adds the fixes listed in §12 on top of `main` @ `6138641`.
+> **Last verified against:** `main` = `development` @ `edddb11` (2026-09-28), deployed on Vercel and Render.
 >
 > **Stack at a glance:** React 19 (Vite 8) frontend + Express 5 / Mongoose 9 (MongoDB Atlas) backend. Frontend is set up for **Vercel**; backend ships a **Dockerfile**.
 
@@ -143,7 +143,7 @@ npm run preview        # serve the built bundle locally
 
 ## 4. Deployment
 
-The repo is prepared for a split deployment: static frontend on **Vercel**, backend as a **Docker** container (any container host — the root `.gitignore` also anticipates Render via `.render/`).
+Split deployment: static frontend on **Vercel**, backend as a **Docker** web service on **Render**.
 
 **Branch workflow:** `main` is the deployed branch (Vercel + Render build from it). Do day-to-day work on `development`, test locally, then merge into `main` to release.
 
@@ -153,7 +153,24 @@ The repo is prepared for a split deployment: static frontend on **Vercel**, back
 - `client/vercel.json` rewrites every path (`/(.*)`) to `/index.html` so deep links like `/projects/123` work with client-side routing.
 - Set `VITE_API_URL` in the Vercel project's environment variables to the deployed backend URL **before building** (it is inlined at build time).
 
-### 4.2 Backend (Docker)
+### 4.2 Backend (Render, Docker)
+
+Render service settings (as configured on 2026-09-28):
+
+| Setting | Value |
+|---------|-------|
+| Service | `Devnetic` web service, Docker runtime, Free instance, Oregon (US West) |
+| URL | `https://devnetic.onrender.com` |
+| Source / branch | `Mohammad-Hamza-Temuri/Devnetic`, branch `main` |
+| Root Directory | `server` (Dockerfile `server/Dockerfile`, build context `server/`) |
+| Auto-Deploy | On Commit — but **only commits that change files under `server/`** trigger a deploy (a Root Directory rule). Client-only or docs-only commits don't redeploy the backend. |
+| Environment | `MONGO_URI`, `JWT_SECRET`, `CLIENT_URL=https://devnetic.vercel.app` (`PORT` is provided by Render — the log shows 10000) |
+| Health Check Path | not set |
+
+If a backend change doesn't deploy by itself after merging to `main`, use **Manual Deploy → Deploy latest commit**. Render's GitHub App access to the repo was only granted on 2026-09-28 (earlier deploy logs warned "we don't have access to your repo"), and automatic deploys haven't been confirmed yet. The next `server/` change will show whether they work.
+
+To build and run the same image locally:
+
 ```bash
 cd server
 docker build -t devnetic-server .
@@ -163,8 +180,7 @@ docker run -p 3000:3000 \
 ```
 - The image is `node:22-alpine`, installs production deps only (`npm ci --omit=dev`), exposes port 3000, and runs `node src/server.js`.
 - `.dockerignore` excludes `.env*`, so secrets must be passed as runtime environment variables, not baked into the image.
-- Production URL: `https://devnetic.onrender.com`.
-- **CORS:** set `CLIENT_URL=https://devnetic.vercel.app` in Render's environment. Without it the API accepts requests from any origin. With it, only the listed origins get CORS headers — Vercel **preview** deployments (`*.vercel.app` per-branch URLs) are then blocked unless you add their URLs to the comma-separated list.
+- **CORS:** `CLIENT_URL=https://devnetic.vercel.app` is set in Render's environment. Without it the API accepts requests from any origin. With it, only the listed origins get CORS headers — Vercel **preview** deployments (`*.vercel.app` per-branch URLs) are then blocked unless you add their URLs to the comma-separated list.
 
 ## 5. Authentication & Authorization
 
@@ -361,7 +377,9 @@ Every page/component that talks to the backend imports this and builds URLs as `
 | Malformed ids | A malformed ObjectId in a URL (e.g. `/projects/abc`) raises a Mongoose CastError -> `500` instead of `400`/`404`. The frontend treats it as "not found". |
 | Tasks | Backend CRUD for tasks exists (`/tasks`) but **no task UI**, and tasks aren't linked to projects or users. |
 | Auth storage | JWT lives in `localStorage` (no refresh-token flow, no httpOnly cookie). The client never re-validates the token; an expired token keeps the UI "logged in" until a protected API call returns 401. There's no shared fetch wrapper to handle 401s globally. |
-| CORS | Controlled by `CLIENT_URL` (see §4.2). If it isn't set on Render, every origin is still allowed. When it is set, Vercel preview URLs must be added explicitly. |
+| CORS | Controlled by `CLIENT_URL` (see §4.2), currently set to `https://devnetic.vercel.app`. Vercel preview URLs must be added explicitly if you want previews to reach the API. |
+| Render free instance | Free Render services sleep when idle, so the first request after a quiet period can take ~a minute while the backend wakes up. |
+| Test accounts in live DB | Local testing on 2026-09-28 used the production database and left two test users with profiles ("Test Owner" and "Test Invitee"). There's no API to delete users/profiles; remove them directly in MongoDB Atlas if unwanted. |
 | Env vars at build time | `VITE_API_URL` is inlined when the client is built — changing it on Vercel requires a redeploy. |
 | Secrets | `.env` files are git-ignored (root, `server/.gitignore`, and `.dockerignore`). Use the `.env.example` templates; pass real values via the host's env settings. |
 | Deprecated icons | `lucide-react`'s `Github` / `Linkedin` brand icons are deprecated (editor warnings only; they still render). |
@@ -439,7 +457,7 @@ A full manual smoke test:
 | `a29cb58` | New users can create a profile: `Profile.jsx` POSTs when none exists, PUTs otherwise; `Dashboard.jsx` shows a "Create Profile" card instead of breaking when no profile exists. |
 | `6138641` | Devnetic favicon (`Devnetic-favicon.jpeg`). |
 
-### On `development` (not yet merged to `main`)
+### Fixes merged on 2026-09-28 (`1298266`…`c010d0b`, plus empty commit `edddb11`)
 
 | Area | Change |
 |------|--------|
